@@ -1,6 +1,9 @@
 <!doctype html>
 <html>
 <head>
+  <!-- Added fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+
   <meta charset="utf-8" />
   <title>GitHub Lite — Hackathon Demo</title>
   <meta name="viewport" content="width=device-width,initial-scale=1" />
@@ -8,11 +11,17 @@
 </head>
 <body>
   <div class="topbar">
-    <div class="brand">GitHub Lite</div>
+    <div class="brand"> <img src="toppng.com-github-blue-outline-octocat-symbol-512x501.png" alt="Logo" class="brand-icon" />GitHub Lite</div>
+    
     <div class="controls">
       <input id="search" placeholder="Search repos..." />
       <button id="btnNewRepo">New Repo</button>
       <button id="btnLogin">Mock Login</button>
+      
+      <!-- /* 🌗 DARK MODE STYLES */ -->
+       <button id="themeToggle" class="btn">🌙</button>
+
+
       <span id="userDisplay"></span>
     </div>
   </div>
@@ -30,4 +39,3 @@
   <script src="script.js"></script>
 </body>
 </html>
-
