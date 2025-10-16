@@ -84,12 +84,28 @@ document.getElementById('btnNewRepo').addEventListener('click', () => {
 // ------------------- GOOGLE LOGIN -------------------
 
 document.getElementById('btnLogin').addEventListener('click', () => {
+  // Show modal with Google button container
+  showModal(`
+    <h3>Login with Google</h3>
+    <div id="googleBtnContainer"></div>
+  `);
+
+  // Initialize Google Sign-In
   google.accounts.id.initialize({
-    client_id: '81284224306-7maa2561r6vv9st1621207tu71o368gj.apps.googleusercontent.com', // replace with your client ID
+    client_id: '81284224306-7maa2561r6vv9st1621207tu71o368gj.apps.googleusercontent.com',
     callback: handleGoogleLogin
   });
-  google.accounts.id.prompt(); // shows Google login popup
+
+  // Render the button inside the container every time modal opens
+  google.accounts.id.renderButton(
+    document.getElementById('googleBtnContainer'),
+    { theme: 'outline', size: 'large' }
+  );
+
+  // Optionally, automatically show the prompt
+  google.accounts.id.prompt();
 });
+
 
 async function handleGoogleLogin(response) {
   try {
