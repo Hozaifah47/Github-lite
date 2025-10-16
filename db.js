@@ -1,64 +1,33 @@
-// db.js
+// filepath: /home/hozaifah/Desktop/github-lite/Github-lite/db.js
 const fs = require('fs');
 const path = require('path');
-const { MongoClient } = require('mongodb');
 
-const CONFIG_FILE = path.join(__dirname, 'config.json');
-let config = {};
-try {
-  if (fs.existsSync(CONFIG_FILE)) {
-    config = JSON.parse(fs.readFileSync(CONFIG_FILE, 'utf-8'));
-  }
-} catch(e) {
-  console.warn('Could not read config file', e);
-}
-
-// ---- MongoDB connection ----
-let dbClient = null;
-let dbInstance = null;
-
-async function connect() {
-  if (dbInstance) return dbInstance;
-  if (!config.mongoUri) {
-    console.warn('Mongo URI not provided. Using fallback storage.');
-    return null;
-  }
-  try {
-    dbClient = new MongoClient(config.mongoUri, { useNewUrlParser: true, useUnifiedTopology: true });
-    await dbClient.connect();
-    dbInstance = dbClient.db(config.mongoDbName || 'github-lite');
-    console.log('Connected to MongoDB');
-    return dbInstance;
-  } catch(e) {
-    console.error('MongoDB connection failed:', e);
-    return null;
-  }
-}
-
-// ---- fallback storage ----
-const FALLBACK_FILE = path.join(__dirname, 'fallback.json');
+const DATA_FILE = path.join(__dirname, 'data.json');
 
 function readFallback() {
+  if (!fs.existsSync(DATA_FILE)) return { repos: [] };
   try {
-    if (!fs.existsSync(FALLBACK_FILE)) return {};
-    return JSON.parse(fs.readFileSync(FALLBACK_FILE, 'utf-8'));
-  } catch(e) {
-    console.error('Error reading fallback storage:', e);
-    return {};
+    const raw = fs.readFileSync(DATA_FILE, 'utf-8');
+    return JSON.parse(raw);
+  } catch (e) {
+    return { repos: [] };
   }
 }
 
-function writeFallback(obj) {
-  try {
-    fs.writeFileSync(FALLBACK_FILE, JSON.stringify(obj, null, 2), 'utf-8');
-  } catch(e) {
-    console.error('Error writing fallback storage:', e);
-  }
+function writeFallback(data) {
+  fs.writeFileSync(DATA_FILE, JSON.stringify(data, null, 2), 'utf-8');
 }
 
-module.exports = {
-  connect,
-  readFallback,
-  writeFallback,
-  config
+const config = {
+  githubClientId: 'Ov23lic2nd965rKaETyK',
+  githubClientSecret: 'f4ea29bc167310afdc1fb1c94c297abf342af90e',
+  githubRedirectUri: 'http://localhost:3000/api/auth/github/callback', // must match your GitHub app settings
+  jwtSecret: 'dev_secret_change_me'
 };
+
+// placeholder connect function (no MongoDB for now)
+async function connect() {
+  return null; // using fallback storage
+}
+
+module.exports = { connect, readFallback, writeFallback, config };
