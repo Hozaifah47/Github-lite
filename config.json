@@ -1,7 +1,9 @@
 {
-  "jwtSecret": "your_jwt_secret_here",
-  "githubClientId": "your_github_client_id",
-  "githubClientSecret": "your_github_client_secret",
-  "githubRedirectUri": "http://localhost:3000/api/auth/github/callback",
-  "mongoUri": "mongodb://localhost:27017/github-lite"
+  "google": {
+    "clientID": "81284224306-7maa2561r6vv9st1621207tu71o368gj.apps.googleusercontent.com",
+    "clientSecret": "YGOCSPX-s0QzFleqrcr-KJ0nMFSFIQywQNnw",
+    "callbackURL": "http://localhost:3000/auth/google/callback"
+  },
+  "jwtSecret": "super_secret_jwt_key",
+  "mongoURI": "mongodb://localhost:27017/githubLite"
 }
