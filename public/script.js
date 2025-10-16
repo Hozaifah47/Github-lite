@@ -12,6 +12,8 @@ const repoViewEl = document.getElementById('repoView');
 const modal = document.getElementById('modal');
 const userDisplay = document.getElementById('userDisplay');
 
+// ------------------- REPO FUNCTIONS -------------------
+
 async function loadRepos(q = '') {
   try {
     const data = await api('/repos' + (q ? ('?q=' + encodeURIComponent(q)) : ''));
@@ -36,20 +38,25 @@ function renderRepoList() {
   });
 }
 
+// ------------------- MODAL -------------------
+
 function showModal(html) {
   modal.innerHTML = `<div class="card">${html}</div>`;
   modal.classList.remove('hidden');
-  // close on click outside card
   modal.addEventListener('click', modalClickHandler);
 }
+
 function modalClickHandler(e) {
   if (e.target === modal) closeModal();
 }
+
 function closeModal() {
   modal.classList.add('hidden');
   modal.innerHTML = '';
   modal.removeEventListener('click', modalClickHandler);
 }
+
+// ------------------- REPO CREATION -------------------
 
 document.getElementById('btnNewRepo').addEventListener('click', () => {
   showModal(`
@@ -74,34 +81,45 @@ document.getElementById('btnNewRepo').addEventListener('click', () => {
   }, { once: true });
 });
 
+// ------------------- GOOGLE LOGIN -------------------
+
 document.getElementById('btnLogin').addEventListener('click', () => {
-  showModal(`<h3>Mock Login</h3><input id="mn" placeholder="Your name" style="width:96%;padding:8px" /><div style="text-align:right;margin-top:8px"><button id="ml" class="btn">Login</button></div>`);
-  document.getElementById('ml').addEventListener('click', async () => {
-    const name = document.getElementById('mn').value.trim();
-    if (!name) return alert('Enter a name');
-    try {
-      const res = await fetch('/api/auth/mock', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name }) });
-      const dat = await res.json();
-      if (dat.token) {
-        currentUser = dat.user;
-        window.localStorage.setItem('demo_token', dat.token);
-        updateUserUI();
-        closeModal();
-      } else {
-        alert('Login failed');
-      }
-    } catch (err) {
-      console.error('Mock login failed', err);
-      alert('Login failed');
-    }
-  }, { once: true });
+  google.accounts.id.initialize({
+    client_id: '81284224306-7maa2561r6vv9st1621207tu71o368gj.apps.googleusercontent.com', // replace with your client ID
+    callback: handleGoogleLogin
+  });
+  google.accounts.id.prompt(); // shows Google login popup
 });
+
+async function handleGoogleLogin(response) {
+  try {
+    const res = await fetch('/api/auth/google', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ token: response.credential })
+    });
+    const data = await res.json();
+    if (data.token) {
+      currentUser = data.user;
+      window.localStorage.setItem('demo_token', data.token);
+      updateUserUI();
+    } else {
+      alert('Google login failed');
+    }
+  } catch (err) {
+    console.error('Google login error', err);
+    alert('Google login failed');
+  }
+}
+
+// ------------------- UPDATE USER -------------------
 
 function updateUserUI() {
   userDisplay.textContent = currentUser ? `Hi, ${currentUser.name}` : '';
 }
 
-// open repo view
+// ------------------- OPEN REPO -------------------
+
 async function openRepo(id) {
   try {
     const r = await api('/repos/' + id);
@@ -143,6 +161,8 @@ function renderRepoView() {
   renderFileTree();
   renderReadme();
 }
+
+// ------------------- FILE FUNCTIONS -------------------
 
 function renderFileTree() {
   const container = document.getElementById('filesTree');
@@ -237,6 +257,8 @@ async function editFile(fileId) {
   }, { once: true });
 }
 
+// ------------------- SHARE -------------------
+
 function showShare() {
   showModal(`
     <h3>Share Repository</h3>
@@ -263,6 +285,8 @@ function showShare() {
     }
   }, { once: true });
 }
+
+// ------------------- COMMITS -------------------
 
 async function showCommits() {
   try {
@@ -293,13 +317,15 @@ async function showCommits() {
   }
 }
 
-// search
+// ------------------- SEARCH -------------------
+
 document.getElementById('search').addEventListener('input', (e) => {
   const q = e.target.value.trim();
   loadRepos(q);
 });
 
-// Theme Toggle
+// ------------------- THEME -------------------
+
 const toggleBtn = document.getElementById("themeToggle");
 if (localStorage.getItem("theme") === "dark") {
   document.body.classList.add("dark");
@@ -316,13 +342,13 @@ toggleBtn.addEventListener("click", () => {
   }
 });
 
-// initial load
+// ------------------- INIT -------------------
+
 loadRepos();
 updateUserUI();
 
-//
-// Small helper to avoid injecting raw HTML from data
-//
+// ------------------- HELPERS -------------------
+
 function escapeHtml(unsafe) {
   if (unsafe === undefined || unsafe === null) return '';
   return String(unsafe)
