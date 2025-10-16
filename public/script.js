@@ -1,7 +1,9 @@
-// script.js
-const api = (path, opts={}) => fetch('/api' + path, opts).then(r=>r.json());
+// public/app.js
 
-// state
+// ---------- API helper ----------
+const api = (path, opts = {}) => fetch('/api' + path, opts).then(r => r.json());
+
+// ---------- State ----------
 let currentUser = null;
 let repos = [];
 let currentRepo = null;
@@ -29,46 +31,7 @@ function renderRepoList(){
   });
 }
 
-function showModal(html){
-  modal.innerHTML = `<div class="card">${html}</div>`;
-  modal.classList.remove('hidden');
-  modal.addEventListener('click', (e)=>{ if(e.target === modal) closeModal(); });
-}
-function closeModal(){ modal.classList.add('hidden'); modal.innerHTML=''; }
-
-document.getElementById('btnNewRepo').addEventListener('click', ()=> {
-  showModal(`
-    <h3>New Repository</h3>
-    <div class="form-row"><input id="newName" placeholder="Repository name" style="width:96%;padding:8px" /></div>
-    <div class="form-row"><input id="newDesc" placeholder="Short description" style="width:96%;padding:8px" /></div>
-    <div style="text-align:right"
-    ><button id="createRepo" class="btn">Create</button></div>
-  `);
-  document.getElementById('createRepo').addEventListener('click', async ()=>{
-    const name = document.getElementById('newName').value.trim();
-    const desc = document.getElementById('newDesc').value.trim();
-    if(!name) return alert('Name needed');
-    const owner = currentUser ? currentUser.id : null;
-    const res = await api('/repos', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({name,description:desc, owner})});
-    closeModal(); loadRepos();
-  });
-});
-
-document.getElementById('btnLogin').addEventListener('click', ()=> {
-  showModal(`<h3>Mock Login</h3><input id="mn" placeholder="Your name" style="width:96%;padding:8px" /><div style="text-align:right;margin-top:8px"><button id="ml" class="btn">Login</button></div>`);
-  document.getElementById('ml').addEventListener('click', async ()=>{
-    const name = document.getElementById('mn').value.trim();
-    const res = await fetch('/api/auth/mock', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({name})});
-    const dat = await res.json();
-    if(dat.token) {
-      currentUser = dat.user;
-      window.localStorage.setItem('demo_token', dat.token);
-      updateUserUI();
-      closeModal();
-    }
-  });
-});
-
+// ---------- User ----------
 function updateUserUI() {
   userDisplay.textContent = currentUser ? `Hi, ${currentUser.name}` : '';
 }
@@ -130,26 +93,13 @@ function renderFileTree(){
 
 function renderReadme(){
   const readmeArea = document.getElementById('readmeArea');
-  const readme = (currentRepo.files||[]).find(f=>f.path.toLowerCase()==='readme.md' || f.path.toLowerCase()==='readme');
-  if(!readme) { readmeArea.innerHTML = ''; return; }
-  
-  const html = renderMarkdown(readme.content || '');
-  readmeArea.innerHTML = `<h3>README</h3><div>${html}</div>`;
+  const readme = (currentRepo.files || []).find(f => f.path.toLowerCase() === 'readme.md' || f.path.toLowerCase() === 'readme');
+  if (!readme) { readmeArea.innerHTML = ''; return; }
+  readmeArea.innerHTML = `<h3>README</h3><div>${renderMarkdown(readme.content || '')}</div>`;
 }
 
-function renderMarkdown(md){
-  
-  let out = md.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
-  out = out.replace(/^### (.*$)/gim, '<h3>$1</h3>');
-  out = out.replace(/^## (.*$)/gim, '<h2>$1</h2>');
-  out = out.replace(/^# (.*$)/gim, '<h1>$1</h1>');
-  out = out.replace(/\*\*(.*)\*\*/gim, '<b>$1</b>');
-  out = out.replace(/\*(.*)\*/gim, '<i>$1</i>');
-  out = out.replace(/\n/g, '<br/>');
-  return out;
-}
-
-function showAddFile(){
+// ---------- Add/Edit file ----------
+function showAddFile() {
   showModal(`
     <h3>New File</h3>
     <div class="form-row"><input id="fpath" placeholder="path e.g. src/app.js or README.md" style="width:100%;padding:8px" /></div>
@@ -225,13 +175,42 @@ async function showCommits(){
   });
 }
 
-// search
-document.getElementById('search').addEventListener('input', (e)=> {
-  const q = e.target.value.trim();
-  loadRepos(q);
+// ---------- New repo ----------
+document.getElementById('btnNewRepo').addEventListener('click', () => {
+  showModal(`
+    <h3>New Repository</h3>
+    <div class="form-row"><input id="newName" placeholder="Repository name" style="width:100%;padding:8px" /></div>
+    <div class="form-row"><input id="newDesc" placeholder="Short description" style="width:100%;padding:8px" /></div>
+    <div style="text-align:right"><button id="createRepo" class="btn">Create</button></div>
+  `);
+  document.getElementById('createRepo').addEventListener('click', async () => {
+    const name = document.getElementById('newName').value.trim();
+    const desc = document.getElementById('newDesc').value.trim();
+    if (!name) return alert('Name needed');
+    const owner = currentUser ? currentUser.id : null;
+    await api('/repos', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name, description: desc, owner }) });
+    closeModal(); loadRepos();
+  });
 });
 
+// ---------- Mock login ----------
+document.getElementById('btnLogin').addEventListener('click', () => {
+  showModal(`<h3>Mock Login</h3><input id="mn" placeholder="Your name" style="width:100%;padding:8px" /><div style="text-align:right;margin-top:8px"><button id="ml" class="btn">Login</button></div>`);
+  document.getElementById('ml').addEventListener('click', async () => {
+    const name = document.getElementById('mn').value.trim();
+    const dat = await (await fetch('/api/auth/mock', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name }) })).json();
+    if (dat.token) {
+      currentUser = dat.user;
+      window.localStorage.setItem('demo_token', dat.token);
+      updateUserUI(); closeModal();
+    }
+  });
+});
 
+// ---------- Search ----------
+searchInput.addEventListener('input', e => loadRepos(e.target.value.trim()));
+
+// ---------- Initial load ----------
 loadRepos();
 updateUserUI();
 // 🌗 Theme Toggle

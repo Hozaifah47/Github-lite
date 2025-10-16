@@ -4,6 +4,10 @@ const path = require('path');
 const url = require('url');
 const { connect, readFallback, writeFallback, config } = require('./db');
 const jwt = require('jsonwebtoken');
+const { OAuth2Client } = require('google-auth-library');
+const GOOGLE_CLIENT_ID = config?.googleClientId;
+const GOOGLE_CLIENT_SECRET = config?.googleClientSecret; // optional, mainly for server-side verification
+const googleClient = GOOGLE_CLIENT_ID ? new OAuth2Client(GOOGLE_CLIENT_ID) : null;
 
 // prefer global fetch (Node 18+) and safely fall back to node-fetch if available
 let fetchFn = global.fetch;
@@ -196,34 +200,37 @@ async function handleApi(req, res) {
       return res.end();
     }
 
-    // --- GitHub OAuth callback ---
-    if (req.method === 'GET' && pathname === '/api/auth/github/callback') {
-      if (!fetchFn) return sendJSON(res, { error: 'server missing fetch' }, 500);
-      if (!config?.githubClientId || !config?.githubClientSecret) return sendJSON(res, { error: 'OAuth not configured' }, 500);
-      const code = u.query?.code;
-      if (!code) return sendJSON(res, { error: 'No code provided' }, 400);
+    if (req.method === 'POST' && pathname === '/api/auth/google') {
+  if (!googleClient) return sendJSON(res, { error: 'Google OAuth not configured' }, 500);
 
-      // exchange code for access token
-      const tokenRes = await fetchFn('https://github.com/login/oauth/access_token', {
-        method: 'POST',
-        headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
-        body: JSON.stringify({ client_id: config.githubClientId, client_secret: config.githubClientSecret, code }),
-      });
-      const tokenData = await tokenRes.json();
-      const accessToken = tokenData?.access_token;
-      if (!accessToken) return sendJSON(res, { error: 'Failed to get access token' }, 400);
+  let body;
+  try { body = await parseBody(req); } catch (e) { return sendJSON(res, { error: e.message }, 400); }
+  const { tokenId } = body;
+  if (!tokenId) return sendJSON(res, { error: 'No tokenId provided' }, 400);
 
-      // fetch user info
-      const userRes = await fetchFn('https://api.github.com/user', {
-        headers: { Authorization: `token ${accessToken}`, 'User-Agent': 'github-lite' },
-      });
-      const githubUser = await userRes.json();
-      if (!githubUser?.id) return sendJSON(res, { error: 'Invalid github user' }, 400);
+  try {
+    const ticket = await googleClient.verifyIdToken({
+      idToken: tokenId,
+      audience: GOOGLE_CLIENT_ID,
+    });
+    const payload = ticket.getPayload(); // contains email, name, sub, picture, etc.
 
-      const user = { id: 'u_' + githubUser.id, name: githubUser.login, avatar: githubUser.avatar_url };
-      const token = sign(user);
-      return sendJSON(res, { token, user });
-    }
+    // create user object
+    const user = {
+      id: 'g_' + payload.sub, // prefix to distinguish Google users
+      name: payload.name,
+      email: payload.email,
+      avatar: payload.picture,
+    };
+
+    // sign JWT
+    const token = sign(user); // reuse your existing `sign` function
+    return sendJSON(res, { token, user });
+  } catch (err) {
+    console.error('Google OAuth error', err);
+    return sendJSON(res, { error: 'Invalid Google token' }, 401);
+  }
+}
 
     // --- LIST REPOS ---
     if (req.method === 'GET' && pathname === '/api/repos') {
