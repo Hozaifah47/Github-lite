@@ -1,27 +1,27 @@
 <!doctype html>
 <html>
 <head>
-  <!-- Added fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+  <link rel="icon" type="image/png" href="toppng.com-github-blue-outline-octocat-symbol-512x501.png" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
 
   <meta charset="utf-8" />
-  <title>GitHub Lite — Hackathon Demo</title>
+  <title>GitHub Lite</title>
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <div class="topbar">
-    <div class="brand"> <img src="toppng.com-github-blue-outline-octocat-symbol-512x501.png" alt="Logo" class="brand-icon" />GitHub Lite</div>
+    <div class="brand">
+      <img src="toppng.com-github-blue-outline-octocat-symbol-512x501.png" alt="Logo" class="brand-icon" />
+      GitHub Lite
+    </div>
     
     <div class="controls">
       <input id="search" placeholder="Search repos..." />
-      <button id="btnNewRepo">New Repo</button>
-      <button id="btnLogin">Login</button>
-      
-      <!-- /* 🌗 DARK MODE STYLES */ -->
-       <button id="themeToggle" class="btn">🌙</button>
-
-
+      <button id="btnNewRepo" type="button">New Repo</button>
+      <button id="btnLogin" type="button">Login</button>
+      <button id="themeToggle" class="btn" type="button">🌙</button>
       <span id="userDisplay"></span>
     </div>
   </div>
@@ -33,9 +33,36 @@
     </div>
   </div>
 
-  <!-- modal area -->
   <div id="modal" class="modal hidden"></div>
-<script src="https://accounts.google.com/gsi/client" async defer></script>
+
+  <!-- Sign Up Modal -->
+<div id="signupModal" class="modal hidden">
+  <div class="modal-content">
+    <h2>Sign Up</h2>
+    <input type="text" id="signupUsername" placeholder="Username" required><br>
+    <input type="email" id="signupEmail" placeholder="Email" required><br>
+    <input type="password" id="signupPassword" placeholder="Password" required><br>
+    <button id="signupSubmit">Sign Up</button>
+    <p>Already have an account? <a href="#" id="linkToSignin">Sign In</a></p>
+    <button id="signupClose">Close</button>
+    <p id="signupMessage"></p>
+  </div>
+</div>
+
+<!-- Sign In Modal -->
+<div id="signinModal" class="modal hidden">
+  <div class="modal-content">
+    <h2>Sign In</h2>
+    <input type="email" id="signinEmail" placeholder="Email" required><br>
+    <input type="password" id="signinPassword" placeholder="Password" required><br>
+    <button id="signinSubmit">Sign In</button>
+    <p>Don’t have an account? <a href="#" id="linkToSignup">Sign Up</a></p>
+    <button id="signinClose">Close</button>
+    <p id="signinMessage"></p>
+  </div>
+</div>
+
+
   <script src="script.js"></script>
 </body>
 </html>

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>GitHub Lite - Home</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="topbar">
+    <div class="brand">
+      <img src="toppng.com-github-blue-outline-octocat-symbol-512x501.png" alt="Logo" class="brand-icon" />
+      GitHub Lite
+    </div>
+    <div class="controls">
+      <button id="btnNewRepo">New Repo</button>
+      <button id="btnLogout">Logout</button>
+      <span id="userDisplay"></span>
+    </div>
+  </div>
+
+  <div class="main">
+    <div id="repoList"></div>
+    <div id="repoView">
+      <div class="placeholder">Select or create a repository</div>
+    </div>
+  </div>
+
+  <div id="repoModal" class="modal hidden">
+    <div class="modal-content">
+      <h2>New Repository</h2>
+      <input type="text" id="repoName" placeholder="Repository Name" required><br>
+      <textarea id="repoDesc" placeholder="Description"></textarea><br>
+      <button id="createRepoBtn">Create</button>
+      <button id="closeRepoModal">Close</button>
+      <p id="repoMessage"></p>
+    </div>
+  </div>
+  <!-- File Modal -->
+<!-- <div id="fileModal" class="modal hidden">
+  <div class="modal-content">
+    <h2>New File</h2>
+    <input type="text" id="fileName" placeholder="Filename" required><br>
+    <textarea id="fileContent" placeholder="File content"></textarea><br>
+    <button id="createFileBtn">Create File</button>
+    <button id="closeFileModal">Close</button>
+    <p id="fileMessage"></p>
+  </div>
+</div> -->
+
+<!-- File Upload Modal -->
+<div id="fileUploadModal" class="modal hidden">
+  <div class="modal-content">
+    <h2>Upload File</h2>
+    <input type="file" id="fileInput"><br><br>
+    <button id="uploadFileBtn">Upload</button>
+    <button id="closeFileUploadModal">Close</button>
+    <p id="uploadMessage"></p>
+  </div>
+</div>
+
+
+  <script src="home.js"></script>
+</body>
+</html>

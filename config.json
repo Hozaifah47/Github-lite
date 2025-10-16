@@ -1,9 +1,0 @@
-{
-  "google": {
-    "clientID": "81284224306-7maa2561r6vv9st1621207tu71o368gj.apps.googleusercontent.com",
-    "clientSecret": "YGOCSPX-s0QzFleqrcr-KJ0nMFSFIQywQNnw",
-    "callbackURL": "http://localhost:3000/auth/google/callback"
-  },
-  "jwtSecret": "super_secret_jwt_key",
-  "mongoURI": "mongodb://localhost:27017/githubLite"
-}
