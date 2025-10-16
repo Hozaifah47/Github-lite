@@ -1,0 +1,23 @@
+{
+  "name": "github-lite",
+  "version": "1.0.0",
+  "description": "Lightweight GitHub-like demo for hackathon",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "body-parser": "^2.2.0",
+    "express": "^5.1.0",
+    "express-session": "^1.18.2",
+    "jsonwebtoken": "^9.0.0",
+    "marked": "^5.0.0",
+    "mongodb": "^6.20.0",
+    "nodemon": "^3.1.10",
+    "passport": "^0.7.0",
+    "passport-github2": "^0.1.12"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}

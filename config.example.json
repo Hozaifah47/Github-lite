@@ -1,0 +1,15 @@
+{
+  "mongoUri": "mongodb://localhost:27017/github_lite",
+  "jwtSecret": "change_this_to_a_random_secret",
+  "oauth": {
+    "github": {
+      "clientId": "",
+      "clientSecret": ""
+    },
+    "google": {
+      "clientId": "",
+      "clientSecret": ""
+    }
+  }
+}
+
