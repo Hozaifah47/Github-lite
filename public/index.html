@@ -1,16 +1,16 @@
 <!doctype html>
-<html>
+<html lang="en">
 <head>
   <script src="https://accounts.google.com/gsi/client" async defer></script>
   <link rel="icon" type="image/png" href="toppng.com-github-blue-outline-octocat-symbol-512x501.png" />
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
-
   <meta charset="utf-8" />
-  <title>GitHub Lite</title>
   <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>GitHub Lite</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
+  <!-- ===== TOPBAR ===== -->
   <div class="topbar">
     <div class="brand">
       <img src="toppng.com-github-blue-outline-octocat-symbol-512x501.png" alt="Logo" class="brand-icon" />
@@ -18,50 +18,79 @@
     </div>
     
     <div class="controls">
-      <input id="search" placeholder="Search repos..." />
-      <button id="btnNewRepo" type="button">New Repo</button>
-      <button id="btnLogin" type="button">Login</button>
       <button id="themeToggle" class="btn" type="button">🌙</button>
-      <span id="userDisplay"></span>
     </div>
   </div>
 
-  <div class="main">
-    <div class="left" id="repoList"></div>
-    <div class="right" id="repoView">
-      <div class="placeholder">Select or create a repository</div>
+  <!-- ===== HERO SECTION ===== -->
+  <section class="hero">
+    <div class="hero-content">
+      <h1>Code. Collaborate. Create.</h1>
+      <p>
+        GitHub Lite gives you a minimal yet powerful way to Manage your projects effortlessly — create repositories, organize files , all in a clean, distraction-free interface.
+      </p>
+      <button id="btnLogin" type="button" class="cta-btn">Get Started</button>
+    </div>
+    <div class="hero-image">
+      <img src="https://cdn-icons-png.flaticon.com/512/733/733553.png" alt="Coding illustration" />
+    </div>
+  </section>
+
+  <!-- ===== FEATURES SECTION ===== -->
+  <section class="features">
+    <h2>Why GitHub Lite?</h2>
+    <div class="feature-grid">
+      <div class="feature-card">
+        <h3>🚀 Fast & Lightweight</h3>
+        <p>Experience the speed of GitHub in a simpler, minimal interface built for focus and productivity.</p>
+      </div>
+      <div class="feature-card">
+        <h3>🌗 Dark Mode Ready</h3>
+        <p>Switch between light and dark themes effortlessly to match your vibe or reduce eye strain.</p>
+      </div>
+      <div class="feature-card">
+        <h3>🔒 Secure & Custom</h3>
+        <p>Sign up with your own account stored in our secure MongoDB database.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== FOOTER ===== -->
+  <footer>
+    <p>© 2025 GitHub Lite — Crafted with 💙 for developers</p>
+  </footer>
+
+  <!-- ===== SIGN UP / SIGN IN MODALS (Hidden initially) ===== -->
+  <div id="signupModal" class="modal hidden">
+    <div class="modal-content">
+      <h2>Sign Up</h2>
+      <input type="text" id="signupUsername" placeholder="Username" required><br>
+      <input type="email" id="signupEmail" placeholder="Email" required><br>
+      <div class="password-wrapper">
+  <input type="password" id="signupPassword" placeholder="Password" required>
+  <span class="toggle-password">👁️</span>
+</div><br>
+      <button id="signupSubmit">Sign Up</button>
+      <p>Already have an account? <a href="#" id="linkToSignin">Sign In</a></p>
+      <button id="signupClose">Close</button>
+      <p id="signupMessage"></p>
     </div>
   </div>
 
-  <div id="modal" class="modal hidden"></div>
-
-  <!-- Sign Up Modal -->
-<div id="signupModal" class="modal hidden">
-  <div class="modal-content">
-    <h2>Sign Up</h2>
-    <input type="text" id="signupUsername" placeholder="Username" required><br>
-    <input type="email" id="signupEmail" placeholder="Email" required><br>
-    <input type="password" id="signupPassword" placeholder="Password" required><br>
-    <button id="signupSubmit">Sign Up</button>
-    <p>Already have an account? <a href="#" id="linkToSignin">Sign In</a></p>
-    <button id="signupClose">Close</button>
-    <p id="signupMessage"></p>
+  <div id="signinModal" class="modal hidden">
+    <div class="modal-content">
+      <h2>Sign In</h2>
+      <input type="email" id="signinEmail" placeholder="Email" required><br>
+      <div class="password-wrapper">
+  <input type="password" id="signinPassword" placeholder="Password" required>
+  <span class="toggle-password">👁️</span>
+</div><br>
+      <button id="signinSubmit">Sign In</button>
+      <p>Don’t have an account? <a href="#" id="linkToSignup">Sign Up</a></p>
+      <button id="signinClose">Close</button>
+      <p id="signinMessage"></p>
+    </div>
   </div>
-</div>
-
-<!-- Sign In Modal -->
-<div id="signinModal" class="modal hidden">
-  <div class="modal-content">
-    <h2>Sign In</h2>
-    <input type="email" id="signinEmail" placeholder="Email" required><br>
-    <input type="password" id="signinPassword" placeholder="Password" required><br>
-    <button id="signinSubmit">Sign In</button>
-    <p>Don’t have an account? <a href="#" id="linkToSignup">Sign Up</a></p>
-    <button id="signinClose">Close</button>
-    <p id="signinMessage"></p>
-  </div>
-</div>
-
 
   <script src="script.js"></script>
 </body>

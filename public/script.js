@@ -11,11 +11,23 @@ btnLogin.addEventListener('click', () => {
 document.getElementById('signupClose').onclick = () => signupModal.classList.add('hidden');
 document.getElementById('signinClose').onclick = () => signinModal.classList.add('hidden');
 
+// ====== EMAIL VALIDATION FUNCTION ======
+function isValidEmail(email) {
+  const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return re.test(email);
+}
+
 // ====== SIGN UP ======
 document.getElementById('signupSubmit').addEventListener('click', async () => {
-  const username = document.getElementById('signupUsername').value;
-  const email = document.getElementById('signupEmail').value;
+  const username = document.getElementById('signupUsername').value.trim();
+  const email = document.getElementById('signupEmail').value.trim();
   const password = document.getElementById('signupPassword').value;
+
+  // Email validation
+  if (!isValidEmail(email)) {
+    document.getElementById('signupMessage').innerText = "Please enter a valid email (example@domain.com).";
+    return; // stop submission
+  }
 
   const res = await fetch('http://localhost:5000/signup', {
     method: 'POST',
@@ -29,8 +41,14 @@ document.getElementById('signupSubmit').addEventListener('click', async () => {
 
 // ====== SIGN IN ======
 document.getElementById('signinSubmit').addEventListener('click', async () => {
-  const email = document.getElementById('signinEmail').value;
+  const email = document.getElementById('signinEmail').value.trim();
   const password = document.getElementById('signinPassword').value;
+
+  // Email validation
+  if (!isValidEmail(email)) {
+    document.getElementById('signinMessage').innerText = "Please enter a valid email (example@domain.com).";
+    return; // stop submission
+  }
 
   const res = await fetch('http://localhost:5000/signin', {
     method: 'POST',
@@ -41,21 +59,11 @@ document.getElementById('signinSubmit').addEventListener('click', async () => {
   const data = await res.json();
   document.getElementById('signinMessage').innerText = data.message;
 
-//   if (res.ok) {
-//     document.getElementById('userDisplay').innerText = data.user.username;
-//     signinModal.classList.add('hidden');
-//   }
-
   if (res.ok) {
-  // Save user info (for later use)
-  localStorage.setItem('loggedUser', JSON.stringify(data.user));
-
-  // Redirect to homepage
-  window.location.href = 'home.html';
-}
-
+    localStorage.setItem('loggedUser', JSON.stringify(data.user));
+    window.location.href = 'home.html';
+  }
 });
-
 
 // ====== TOGGLE BETWEEN SIGN IN / SIGN UP ======
 const linkToSignup = document.getElementById('linkToSignup');
@@ -76,7 +84,6 @@ linkToSignin.addEventListener('click', (e) => {
 // 🌗 Theme Toggle
 const toggleBtn = document.getElementById("themeToggle");
 
-
 if (localStorage.getItem("theme") === "dark") {
   document.body.classList.add("dark");
   toggleBtn.textContent = "☀️";
@@ -91,5 +98,19 @@ toggleBtn.addEventListener("click", () => {
   } else {
     toggleBtn.textContent = "🌙";
     localStorage.setItem("theme", "light");
-  }
+  }
+});
+
+// ====== PASSWORD TOGGLE ======
+document.querySelectorAll('.toggle-password').forEach(icon => {
+  icon.addEventListener('click', () => {
+    const input = icon.previousElementSibling; // gets the password input
+    if (input.type === 'password') {
+      input.type = 'text';
+      icon.textContent = '🙈'; // visible
+    } else {
+      input.type = 'password';
+      icon.textContent = '👁️'; // hidden
+    }
+  });
 });

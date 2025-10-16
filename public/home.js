@@ -204,3 +204,24 @@ document.getElementById('uploadFileBtn').addEventListener('click', async () => {
     loadFiles(currentRepoId); // refresh file list
   }
 });
+// 🌗 Theme Toggle
+const toggleBtn = document.getElementById("themeToggle");
+
+// Check saved preference
+if (localStorage.getItem("theme") === "dark") {
+  document.body.classList.add("dark");
+  toggleBtn.textContent = "☀️";
+}
+
+// On click, toggle theme
+toggleBtn.addEventListener("click", () => {
+  document.body.classList.toggle("dark");
+
+  if (document.body.classList.contains("dark")) {
+    toggleBtn.textContent = "☀️";
+    localStorage.setItem("theme", "dark");
+  } else {
+    toggleBtn.textContent = "🌙";
+    localStorage.setItem("theme", "light");
+  }
+});
