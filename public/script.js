@@ -39,9 +39,10 @@ function closeModal(){ modal.classList.add('hidden'); modal.innerHTML=''; }
 document.getElementById('btnNewRepo').addEventListener('click', ()=> {
   showModal(`
     <h3>New Repository</h3>
-    <div class="form-row"><input id="newName" placeholder="Repository name" style="width:100%;padding:8px" /></div>
-    <div class="form-row"><input id="newDesc" placeholder="Short description" style="width:100%;padding:8px" /></div>
-    <div style="text-align:right"><button id="createRepo" class="btn">Create</button></div>
+    <div class="form-row"><input id="newName" placeholder="Repository name" style="width:96%;padding:8px" /></div>
+    <div class="form-row"><input id="newDesc" placeholder="Short description" style="width:96%;padding:8px" /></div>
+    <div style="text-align:right"
+    ><button id="createRepo" class="btn">Create</button></div>
   `);
   document.getElementById('createRepo').addEventListener('click', async ()=>{
     const name = document.getElementById('newName').value.trim();
@@ -54,7 +55,7 @@ document.getElementById('btnNewRepo').addEventListener('click', ()=> {
 });
 
 document.getElementById('btnLogin').addEventListener('click', ()=> {
-  showModal(`<h3>Mock Login</h3><input id="mn" placeholder="Your name" style="width:100%;padding:8px" /><div style="text-align:right;margin-top:8px"><button id="ml" class="btn">Login</button></div>`);
+  showModal(`<h3>Mock Login</h3><input id="mn" placeholder="Your name" style="width:96%;padding:8px" /><div style="text-align:right;margin-top:8px"><button id="ml" class="btn">Login</button></div>`);
   document.getElementById('ml').addEventListener('click', async ()=>{
     const name = document.getElementById('mn').value.trim();
     const res = await fetch('/api/auth/mock', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({name})});
@@ -131,13 +132,13 @@ function renderReadme(){
   const readmeArea = document.getElementById('readmeArea');
   const readme = (currentRepo.files||[]).find(f=>f.path.toLowerCase()==='readme.md' || f.path.toLowerCase()==='readme');
   if(!readme) { readmeArea.innerHTML = ''; return; }
-  // simple markdown render (only basics) - you can swap in marked lib later
+  
   const html = renderMarkdown(readme.content || '');
   readmeArea.innerHTML = `<h3>README</h3><div>${html}</div>`;
 }
 
 function renderMarkdown(md){
-  // very tiny markdown support
+  
   let out = md.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
   out = out.replace(/^### (.*$)/gim, '<h3>$1</h3>');
   out = out.replace(/^## (.*$)/gim, '<h2>$1</h2>');
@@ -230,7 +231,26 @@ document.getElementById('search').addEventListener('input', (e)=> {
   loadRepos(q);
 });
 
-// initial load
+
 loadRepos();
 updateUserUI();
+// 🌗 Theme Toggle
+const toggleBtn = document.getElementById("themeToggle");
 
+
+if (localStorage.getItem("theme") === "dark") {
+  document.body.classList.add("dark");
+  toggleBtn.textContent = "☀️";
+}
+
+toggleBtn.addEventListener("click", () => {
+  document.body.classList.toggle("dark");
+
+  if (document.body.classList.contains("dark")) {
+    toggleBtn.textContent = "☀️";
+    localStorage.setItem("theme", "dark");
+  } else {
+    toggleBtn.textContent = "🌙";
+    localStorage.setItem("theme", "light");
+  }
+});
